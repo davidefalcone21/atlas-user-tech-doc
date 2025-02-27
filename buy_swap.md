@@ -127,8 +127,7 @@
     - Confirmation status
     - Link to transaction on blockchain explorer
     - Final amount of tokens received
-    - Updated wallet balances
-
+    - Call back button to return to positions of the wallet
 ---
 
 ## 3. Affected Systems and Dependencies

@@ -1,17 +1,17 @@
-# User Action Requirement: Buy Coin (Limit Order)
+# User Action Requirement: Buy Coin (DCA)
 
 ---
 
 ## 1. Overview
 
 - **User Action:**  
-  `Buy Coin (Limit Order)`
+  `Buy Coin (DCA)`
 
 - **Short Description:**  
-  Allows users to create conditional buy orders that execute only when a token reaches a specific price or market cap target. The order includes parameters for amount, trigger conditions, and expiration time.
+  Allows users to create dollar-cost averaging (DCA) orders that automatically spread purchases of a token over time within specified price ranges and intervals to reduce the impact of volatility.
 
 - **Scope:**  
-  Chain-specific advanced trading function that enables users to set up automated buys at their desired entry points without constantly monitoring the market.
+  Chain-specific advanced trading function that enables users to implement automated investment strategies with customizable parameters for timing, price ranges, and duration.
 
 ---
 
@@ -19,24 +19,26 @@
 
 ### 2.1 Functional Requirements
 - **Input / Parameters:**
-    - **Entry Point 1:** User sends contract address directly to the chat, then switches to LIMIT mode
-    - **Entry Point 2:** User clicks "Buy" button, provides contract address when prompted, then switches to LIMIT mode
+    - **Entry Point 1:** User sends contract address directly to the chat, then switches to DCA mode
+    - **Entry Point 2:** User clicks "Buy" button, provides contract address when prompted, then switches to DCA mode
     - **Additional parameters:**
         - Wallet selection
-        - Swap/Limit/DCA mode selection (LIMIT selected)
+        - Swap/Limit/DCA mode selection (DCA selected)
         - Buy/Sell mode selection
         - Slippage setting
         - Anti-MEV mode setting
         - Priority fee/Tip settings
-        - Amount of native token for the order
-        - Trigger price (in USD or market cap target)
-        - Order expiration time
+        - Total amount of native token for the DCA strategy
+        - Minimum price boundary (in USD or market cap)
+        - Maximum price boundary (in USD or market cap)
+        - Time interval between purchases (e.g., 30m)
+        - Total duration of the DCA strategy (e.g., 12h)
 
 - **Expected Outcome / Response:**  
   The process has three main stages:
-    1. Token Information Display: Detailed token metrics, market data, and wallet balances (same as Swap)
-    2. Limit Order Configuration: Interactive buttons for setting all order parameters including trigger price and expiry
-    3. Order Creation Confirmation: Details of the created order and monitoring status
+    1. Token Information Display: Detailed token metrics, market data, and wallet balances (same as Swap/Limit)
+    2. DCA Strategy Configuration: Interactive buttons for setting all parameters including price boundaries, intervals, and duration
+    3. Strategy Creation Confirmation: Details of the created DCA strategy and monitoring status
 
 - **User Interface Behavior:**  
   **Stage 1: Token Information Display**
@@ -61,7 +63,7 @@
   📊 [Chart Link 1] | [Chart Link 2]
   ```
 
-  **Stage 2: Limit Order Configuration Buttons**
+  **Stage 2: DCA Configuration Buttons**
   ```
   Row 1:
   "🔄 REFRESH"
@@ -70,7 +72,7 @@
   "⬅️ PREV" | "[WALLET NAME]" | "➡️ NEXT" (wallet selection)
   
   Row 3:
-  "SWAP" | "LIMIT ✓" | "DCA" (mode selection)
+  "SWAP" | "LIMIT" | "DCA ✓" (mode selection)
   
   Row 4:
   "BUY MODE ✓" | "SELL MODE" (direction selection)
@@ -82,59 +84,69 @@
   "PRIORITY FEE" | "TIP"
   
   Row 7:
-  "[Amount 1] [Native Token]" | "[Amount 2] [Native Token]" | "[Amount 3] [Native Token]" | "[Amount 4] [Native Token]" (preset amounts)
+  "[Amount 1] [Native Token]" | "[Amount 2] [Native Token]"
   
   Row 8:
-  "X [Native Token]" (custom amount)
+  "[Amount 3] [Native Token]" | "[Amount 4] [Native Token]"
   
   Row 9:
-  "TRIGGER PRICE" (set price or mcap target)
+  "X [Native Token]" (custom amount)
   
   Row 10:
-  "EXPIRY 4H" (order duration)
+  "MIN PRICE $[Value]" (minimum price boundary)
   
   Row 11:
+  "MAX PRICE $[Value]" (maximum price boundary)
+  
+  Row 12:
+  "INTERVAL 30M" | "DURATION 12H"
+  
+  Row 13:
   "CREATE ORDER"
   ```
 
-  **Stage 3: Order Creation Messages**
-    - Confirmation message: "Limit order created: Buy [Amount] [Native Token] worth of [Token Symbol] when price reaches [Trigger Price] or market cap reaches [Market Cap Target]. Order expires in [Expiry Time]. You will be notified when the order executes."
+  **Stage 3: DCA Creation Messages**
+    - Confirmation message: "DCA strategy created: Total investment of [Amount] [Native Token] into [Token Symbol] spread over [Duration] with purchases every [Interval]. Price range: $[Min Price] to $[Max Price]. The first purchase will execute shortly. You will be notified after each execution."
 
 ### 2.2 Process Flow
 - **Step 1:** User initiates the process by either:
     - Sending a contract address directly to the chat
     - Clicking "Buy" button and then providing the contract address when prompted
 
-- **Step 2:** Bot automatically identifies the blockchain and retrieves token information (same as Swap function).
+- **Step 2:** Bot automatically identifies the blockchain and retrieves token information (same as Swap/Limit functions).
 
-- **Step 3:** Bot displays comprehensive token information and the full order configuration interface.
+- **Step 3:** Bot displays comprehensive token information and the DCA configuration interface.
 
-- **Step 4:** User selects "LIMIT" mode from the trade type options.
+- **Step 4:** User selects "DCA" mode from the trade type options.
 
-- **Step 5:** User configures the limit order by:
+- **Step 5:** User configures the DCA strategy by:
     - Selecting the desired wallet using PREV/NEXT buttons
     - Confirming buy mode (vs. sell)
     - Setting slippage if desired
     - Setting Anti-MEV protection if desired
     - Setting priority fee/tip if desired
-    - Selecting an amount of native token for the order (preset buttons or custom)
-    - Setting the trigger price (can be USD price or market cap value)
-    - Setting the order expiration time (default 4H)
+    - Selecting the total amount of native token for the entire DCA strategy
+    - Setting the minimum price boundary (can be USD price or market cap value)
+    - Setting the maximum price boundary (can be USD price or market cap value)
+    - Confirming or adjusting the time interval between purchases (default 30m)
+    - Confirming or adjusting the total duration of the DCA strategy (default 12h)
 
-- **Step 6:** User clicks "CREATE ORDER" to finalize the limit order.
+- **Step 6:** User clicks "CREATE ORDER" to finalize the DCA strategy.
 
-- **Step 7:** Bot confirms the order creation with details and begins monitoring the market for the trigger condition.
-  - Call back button to return to positions of the wallet
-  - Call back button to return to see list of open orders
-- **Step 8:** If the trigger condition is met before expiration:
-    - Bot executes the buy order with the specified parameters
-    - User receives notification with transaction details and confirmation
-    - Bot updates the message with the successful execution and final details
+- **Step 7:** Bot confirms the strategy creation with details and begins the automated DCA process.
+- Call back button to return to see list of open orders
 
-- **Step 9:** If the order expires without the trigger condition being met:
-    - Bot cancels the order
-    - User receives notification that the order has expired
-    - No transaction is executed
+- **Step 8:** For each interval during the specified duration:
+    - Bot checks if the current price is within the specified range (min to max price)
+    - If in range, executes a proportional buy order based on the interval and total amount
+    - User receives notification with transaction details after each execution
+    - Bot updates the strategy status with progress and remaining budget
+
+- **Step 9:** When the strategy completes (duration reached or total amount used):
+    - Bot sends a final summary of all executions
+    - User receives total tokens acquired, average purchase price, and other statistics
+    - Call back button to return to positions of the wallet
+
 ---
 
 ## 3. Affected Systems and Dependencies
